@@ -1,0 +1,14 @@
+{
+  "name": "myanywhere",
+  "version": "1.0.0",
+  "description": "do a demo of anywhere static http",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^5.7.0"
+  }
+}
