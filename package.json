@@ -10,5 +10,8 @@
   "license": "ISC",
   "devDependencies": {
     "eslint": "^5.7.0"
+  },
+  "dependencies": {
+    "handlebars": "^4.0.12"
   }
 }
