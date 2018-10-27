@@ -132,7 +132,7 @@ module.exports = async function (req, res, filePath) {
       const data = {
         // path.basename() 方法返回一个 path 的最后一部分
         title: path.basename(filePath),
-        // path.relative('/data/orandea/test/aaa', '/data/orandea/impl/bbb');
+        // path.relative('/data/orandea/test/aaa',      '/data/orandea/impl/bbb');
         // 返回: '../../impl/bbb'
         dir: dir ? `/${dir}` : '',
         files
@@ -152,3 +152,134 @@ module.exports = async function (req, res, filePath) {
 
 mime.js
 
+pop() 方法将删除 arrayObject 的最后一个元素，把数组长度减 1，并且返回它删除的元素的值。如果数组已经为空，则 pop() 不改变数组，并返回 undefined 值。
+
+```javascript
+module.exports = (filePath) => {
+  let ext = path.extname(filePath).toLowerCase()
+
+  if (!ext) {
+    ext = filePath
+  }
+
+  return mimeTypes[ext] || mimeTypes['.txt']
+}
+```
+mine.js 根据文件后缀名来返回对应的mime
+
+压缩页面优化性能
+
+文件 对读取的stream压缩
+
+在 defaultConfig.js中 添加 compress项
+```javascript
+module.exports = {
+  // process.cwd() 路径能随着执行路径的改变而改变
+  // process cwd() 方法返回 Node.js 进程当前工作的目录。
+  root: process.cwd(),
+  hostname: '127.0.0.1',
+  port: 9527,
+  compress: /\.(html|js|css|md)/
+}
+
+```
+
+编写压缩处理 compress
+
+```javascript
+const {createGzip, createDeflate} = require('zlib')
+module.exports = (rs, req, res) => {
+  const acceptEncoding = req.headers['accept-encoding']
+  if (!acceptEncoding || !acceptEncoding.match(/\b(gzip|deflate)\b/)) {
+    return
+  } else if (acceptEncoding.match(/\bgzip\b/)) {
+    res.setHeader('Content-Encoding', 'gzip')
+    return rs.pipe(createGzip())
+  } else if (acceptEncoding.match(/\bdeflate\b/)) {
+    res.setHeader('Content-Encoding', 'deflate')
+    return rs.pipe(createGzip())
+  }
+}
+
+/*
+ match() 方法可在字符串内检索指定的值，或找到一个或多个正则表达式的匹配。
+ 该方法类似 indexOf() 和 lastIndexOf() ，但是它返回指定的值，而不是字符串的位置。
+ */
+
+```
+
+router.js中读取文件的更改
+```javascript
+      let rs = fs.createReadStream(filePath)
+
+      if (filePath.match(config.compress)) {
+        rs = compress(rs, req, res)
+      }
+      rs.pipe(res)
+```
+
+压缩率可达 70%
+
+range 不太明白
+
+缓存
+用户请求 本地缓存 --no--> 请求资源 --> 协商缓存 返回响应
+
+用户请求 本地缓存 --yes--> 判断换存是否有效 --有效-->  本地缓存
+                                         --无效-->   协商缓存 返回响应
+
+缓存header
+expires 老旧 现在不用
+Cache-Control 相对与上次请求的时间
+If-Modified-Since  /  Last-Modified
+If-None-Match / ETag
+
+cache.js
+```javascript
+const {cache} = require('../config/defaultConfig')
+function refreshRes(stats, res) {
+  const { maxAge, expires, cacheControl, lastModified, etag } = cache
+  if (expires) {
+    res.setHeader('Expores', (new Date(Date.now() + maxAge * 1000)).toUTCString())
+  }
+  if (cacheControl) {
+    res.setHeader('Cache-Control', `public, max-age=${maxAge}`)
+  }
+  if (lastModified) {
+    res.setHeader('Last-Modified', stats.mtime.toUTCString())
+  }
+  if (etag) {
+    res.setHeader('ETag', `${stats.size}-${stats.mtime.toUTCString()}`)
+  }
+}
+
+module.exports = function isFresh(stats, req, res) {
+  refreshRes(stats, res)
+
+  const lastModified = req.headers['if-modified-since']
+  const etag = req.headers['if-none-match']
+
+  if (!lastModified && !etag) {
+    return false
+  }
+  if (lastModified && lastModified !== res.getHeader('Last-Modified')) {
+    return false
+  }
+  if (etag && res.getHeader('ETag').indexOf(etag) ) {
+    return false
+  }
+  return true
+}
+
+
+```
+router.js
+```javascript
+    if (isFresh(stats, req, res)) {
+      res.statusCode = 304
+      res.end()
+      return
+    }
+```
+
+自动打开浏览器
