@@ -1,7 +1,49 @@
-## myanywhere
-> 用原生node做一个简易阉割版的anywhere，以提升对node与http的理解。
+# myanywhere
 
-读取文件或文件夹
+> 用原生node做一个简易阉割版的anywhere静态资源服务器，以提升对node与http的理解。
+
+![demo](http://pd92xwp9t.bkt.clouddn.com/image/notes/node-anywhere.gif)
+
+**相关知识**
+
+- es6及es7语法
+- http的相关网络知识
+  - 响应头
+  - 缓存相关
+  - 压缩相关
+
+
+- path模块
+
+  - path.join拼接路径
+  - path.relative
+  - path.basename
+  - path.extname
+
+- http模块
+
+- fs模块
+
+  - fs.stat函数 
+
+    > 使用 fs.stat函数取得stats来获取文件或文件夹的参数
+
+    - stats.isFile 判断是否为文件夹
+
+  - fs.createReadStream(filePath).pipe(res)
+
+    > 文件可读流的形式，使读取效率更高
+
+  - fs.readdir
+
+  - ...
+
+- promisify 
+
+  - async await
+
+## 1.实现读取文件或文件夹
+
 ```javascript
 const http= require('http')
 const conf = require('./config/defaultConfig')
@@ -39,9 +81,14 @@ server.listen(conf.port, conf.hostname, () => {
 
 ```
 
-异步修改
+## 2. async await异步修改
 
-router.js
+> 为了避免多层回调出现，我们使用jsasync 和 await来 改造我们的代码
+
+**router.js**
+
+把逻辑相关的代码从app.js中抽离出来放入router.js中，分模块开发
+
 ```javascript
 const fs = require('fs')
 const promisify = require('util').promisify
@@ -70,7 +117,7 @@ module.exports = async function (req, res, filePath) {
 
 ```
 
-index.js
+**app.js**
 ```javascript
 const http= require('http')
 const conf = require('./config/defaultConfig')
@@ -88,73 +135,102 @@ server.listen(conf.port, conf.hostname, () => {
 })
 ```
 
-fs promisify stats createReadStream pipe
 
-完善可点击
-使用handlebars渲染
-引用handlebars
-const Handlebars = require('handlebars')
 
-创建模板html
+## 3. 完善可点击
 
-router配置
-引用时使用绝对路径
-const tplPath = path.join(__dirname, '../template/dir.html')
-const source = fs.readFileSync(tplPath, 'utf8')
-const template = Handlebars.compile(source)
+> 上面的工作 已经可以让我们在页面中看到文件夹的目录，但是是文字，不可点击
 
-创建数据
-```javascript
-const fs = require('fs')
-const Handlebars = require('handlebars')
-const path = require('path')
-const promisify = require('util').promisify
-const stat = promisify(fs.stat)
-const readdir = promisify(fs.readdir)
-const config = require('../config/defaultConfig')
+**使用handlebars渲染**
 
-const tplPath = path.join(__dirname, '../template/dir.html')
-const source = fs.readFileSync(tplPath, 'utf8')
-const template = Handlebars.compile(source)
+- 引用handlebars
 
-module.exports = async function (req, res, filePath) {
-  try {
-    const stats = await stat(filePath)
-    if (stats.isFile()) {
-      res.statusCode = 200
-      res.setHeader('Content-text', 'text/plain')
-      fs.createReadStream(filePath).pipe(res)
-    } else if (stats.isDirectory()) {
-      const files = await readdir(filePath)
-      res.statusCode = 200
-      res.setHeader('Content-text', 'text/html')
-      const dir = path.relative(config.root, filePath)
-      const data = {
-        // path.basename() 方法返回一个 path 的最后一部分
-        title: path.basename(filePath),
-        // path.relative('/data/orandea/test/aaa',      '/data/orandea/impl/bbb');
-        // 返回: '../../impl/bbb'
-        dir: dir ? `/${dir}` : '',
-        files
+  ```javascript
+  const Handlebars = require('handlebars')
+  ```
+
+- 创建模板html
+
+  ```html
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{{title}}</title>
+    <style>
+      body {
+        margin: 10px
       }
-      console.info(files)
-      res.end(template(data))
+      a {
+        display: block;
+        margin-bottom: 10px;
+        font-weight: 600;
+      }
+    </style>
+  </head>
+  <body>
+    {{#each files}}
+      <a href="{{../dir}}/{{file}}">{{file}}</a>
+    {{/each}}
+  </body>
+  </html>
+
+  ```
+
+  ​
+
+- router.js配置
+
+  *引用时使用绝对路径*
+
+  ```javascript 
+  const tplPath = path.join(__dirname, '../template/dir.html')
+  const source = fs.readFileSync(tplPath, 'utf8')
+  const template = Handlebars.compile(source)
+  ```
+
+- 创建数据 `data`
+
+    ```javascript
+    ....
+    module.exports = async function (req, res, filePath) {
+      try {
+       ...
+        } else if (stats.isDirectory()) {
+          const files = await readdir(filePath)
+          res.statusCode = 200
+          res.setHeader('Content-text', 'text/html')
+          const dir = path.relative(config.root, filePath)
+          const data = {
+            // path.basename() 方法返回一个 path 的最后一部分
+            title: path.basename(filePath),
+            // path.relative('/data/orandea/test/aaa',      '/data/orandea/impl/bbb');
+            // 返回: '../../impl/bbb'
+            dir: dir ? `/${dir}` : '',
+            files
+          }
+          console.info(files)
+          res.end(template(data))
+        }
+      } catch (error) {
+    ...
+      }
     }
-  } catch (error) {
-    console.error(error)
-    res.statusCode = 404
-    res.setHeader('Content-text', 'text/plain')
-    res.end(`${filePath} is not a directoru or file\n ${error.toString()}`)
-  }
-}
 
-```
+    ```
 
-mime.js
+## 4. mime
 
-pop() 方法将删除 arrayObject 的最后一个元素，把数组长度减 1，并且返回它删除的元素的值。如果数组已经为空，则 pop() 不改变数组，并返回 undefined 值。
+新建mime.js文件
 
 ```javascript
+const path = require('path')
+
+const mimeTypes = {
+    ....
+}
 module.exports = (filePath) => {
   let ext = path.extname(filePath).toLowerCase()
 
@@ -167,11 +243,11 @@ module.exports = (filePath) => {
 ```
 mine.js 根据文件后缀名来返回对应的mime
 
-压缩页面优化性能
+## 5. 压缩页面优化性能
 
-文件 对读取的stream压缩
+> 对读取的stream压缩
 
-在 defaultConfig.js中 添加 compress项
+**在 defaultConfig.js中 添加 compress项**
 ```javascript
 module.exports = {
   // process.cwd() 路径能随着执行路径的改变而改变
@@ -184,7 +260,7 @@ module.exports = {
 
 ```
 
-编写压缩处理 compress
+**编写压缩处理 compress**
 
 ```javascript
 const {createGzip, createDeflate} = require('zlib')
@@ -208,33 +284,35 @@ module.exports = (rs, req, res) => {
 
 ```
 
-router.js中读取文件的更改
+**router.js中读取文件的更改**
 ```javascript
-      let rs = fs.createReadStream(filePath)
-
-      if (filePath.match(config.compress)) {
-        rs = compress(rs, req, res)
-      }
-      rs.pipe(res)
+...
+let rs = fs.createReadStream(filePath)
+if (filePath.match(config.compress)) {
+    rs = compress(rs, req, res)
+  }
+rs.pipe(res)
 ```
 
-压缩率可达 70%
+文件结果compress压缩后，压缩率可达 70%
 
-range 不太明白
+## 6.处理缓存
 
-缓存
+**缓存大致原理**
+
 用户请求 本地缓存 --no--> 请求资源 --> 协商缓存 返回响应
 
 用户请求 本地缓存 --yes--> 判断换存是否有效 --有效-->  本地缓存
-                                         --无效-->   协商缓存 返回响应
+                                         				       --无效-->   协商缓存 返回响应
 
-缓存header
-expires 老旧 现在不用
-Cache-Control 相对与上次请求的时间
-If-Modified-Since  /  Last-Modified
-If-None-Match / ETag
+**缓存header**
 
-cache.js
+- expires 老旧 现在不用
+- Cache-Control 相对与上次请求的时间
+- If-Modified-Since  /  Last-Modified
+- If-None-Match / ETag
+
+**cache.js**
 ```javascript
 const {cache} = require('../config/defaultConfig')
 function refreshRes(stats, res) {
@@ -273,13 +351,48 @@ module.exports = function isFresh(stats, req, res) {
 
 
 ```
-router.js
+**router.js**
+
 ```javascript
-    if (isFresh(stats, req, res)) {
+// 如果文件是是新鲜的 不用更改，就设置响应头 直接返回
+if (isFresh(stats, req, res)) {
       res.statusCode = 304
       res.end()
       return
     }
 ```
 
-自动打开浏览器
+## 7.自动打开浏览器
+
+**编写openUrl.js**
+
+```javascript
+const {exec} = require('child_process')
+
+module.exports = url => {
+  switch (process.platform) {
+  case 'darwin':
+    exec(`open ${url}`)
+    break
+
+  case 'win32':
+    exec(`start ${url}`)
+  }
+}
+```
+
+只支持Windows和 mac系统
+
+**在app.js中使用**
+
+```javascript
+server.listen(conf.port, conf.hostname, () => {
+  const addr = `http:${conf.hostname}:${conf.port}`
+  console.info(`run at ${addr}`)
+  openUrl(addr)
+})
+```
+
+## 总结
+
+domo不难，但是涉及到的零碎知识点比较多，对底层的node有个更进一步了解，也感受到了node在处理网路请求这一块的强大之处，另外es6和es7的新语法很是强大，以后要多做功课。
