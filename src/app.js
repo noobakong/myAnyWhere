@@ -1,3 +1,5 @@
+#!/usr/bin / env node
+
 const http= require('http')
 const conf = require('./config/defaultConfig')
 const path = require('path')
@@ -6,7 +8,7 @@ const openUrl = require('./help/openUrl')
 
 const server = http.createServer((req, res) => {
   const filePath = path.join(conf.root, req.url)
-  route(req, res, filePath)
+  route(req, res, decodeURI(filePath))
 })
 
 server.listen(conf.port, conf.hostname, () => {
@@ -14,3 +16,4 @@ server.listen(conf.port, conf.hostname, () => {
   console.info(`run at ${addr}`)
   openUrl(addr)
 })
+

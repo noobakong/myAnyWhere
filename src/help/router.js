@@ -45,6 +45,7 @@ module.exports = async function (req, res, filePath) {
       rs.pipe(res)
     } else if (stats.isDirectory()) {
       const files = await readdir(filePath)
+      console.info(files)
       res.statusCode = 200
       res.setHeader('Content-text', 'text/html')
       const dir = path.relative(config.root, filePath)
@@ -55,8 +56,9 @@ module.exports = async function (req, res, filePath) {
         // 返回: '../../impl/bbb'
         dir: dir ? `/${dir}` : '',
         files: files.map(file => {
+
           return {
-            file,
+            file: decodeURI(file),
             icon: Mime(file)
           }
         })

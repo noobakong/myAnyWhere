@@ -393,6 +393,12 @@ server.listen(conf.port, conf.hostname, () => {
 })
 ```
 
+## 8. 中文路径出错问题
+
+[JavaScript decodeURI() 函数](http://www.w3school.com.cn/jsref/jsref_decodeURI.asp)
+
+使用js decodeURL 对 base64 的进行转码，这样就不会报错了
+
 ## 总结
 
 domo不难，但是涉及到的零碎知识点比较多，对底层的node有个更进一步了解，也感受到了node在处理网路请求这一块的强大之处，另外es6和es7的新语法很是强大，以后要多做功课。
