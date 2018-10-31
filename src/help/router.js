@@ -19,8 +19,8 @@ module.exports = async function (req, res, filePath) {
     const stats = await stat(filePath)
     // console.info(stats)
     if (stats.isFile()) {
+      // console.info(stats)
       const contentType = Mime(filePath)
-
       res.setHeader('Content-text', contentType)
 
       if (isFresh(stats, req, res)) {
