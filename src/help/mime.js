@@ -484,12 +484,15 @@ const mimeTypes = {
   '.json' : 'application/json'
 }
 
-module.exports = (filePath) => {
+module.exports = (filePath, isIcon) => {
   let ext = path.extname(filePath).toLowerCase()
 
   if (!ext) {
     ext = filePath
   }
-
-  return mimeTypes[ext] || mimeTypes['.txt']
+  if (isIcon) {
+    return ext.replace(/[.]/g, '')
+  } else {
+    return mimeTypes[ext] || mimeTypes['.txt']
+  }
 }

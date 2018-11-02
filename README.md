@@ -399,6 +399,83 @@ server.listen(conf.port, conf.hostname, () => {
 
 使用js decodeURL 对 base64 的进行转码，这样就不会报错了
 
+## 9. 设置脚本全局可运行
+
+**在app.js入口文件的第一行加入**
+
+```shell
+#!/usr/bin / env node
+```
+
+**在package.json文家中加入bin属性项：**
+
+```json
+  "bin": {
+    "akong": "./src/app.js"
+  },
+```
+
+`akong` 就是你要在全局执行的命令，后面则是你要执行的文件，显然我们这里要执行app.js
+
+**在package.json同级目录下执行命令`npm link`** 
+
+这样，我们就把我的脚本连接到Windows全局中了
+
+在任意cmd窗口执行 `akong` 命令即可打开
+
+## 10.样式优化
+
+**界面优化**
+
+将li的展示效果优化成三列 字体和颜色等也做了进一步样式调整
+
+**mime小图标优化**
+
+- 下载好对应的mime的图片 编写图片对应的css样式
+
+- 将 router.js 中 循环files改成：
+
+  ```javascript
+  files: await Promise.all(files.map(async file => {
+      const inFilePath = path.join(filePath, file)
+      const everyfile = await stat(inFilePath)
+      const isDir = everyfile.isDirectory()
+      const icon = isDir ? 'dir' : Mime(file, true)
+      return {
+          file: decodeURI(file),
+          icon
+      }
+  }))
+  ```
+
+  在进入文件夹后遍历每一项
+
+  用fs.stat.isDirectory()来判断是否是文件夹
+
+  然后根据返回的布尔值来决定icon
+
+- 在dir.html中引入编写好的mime.css 
+
+- 在html中加入类icon
+
+  ```html
+  <a href="{{dir}}/{{file.file}}">
+      <span class="txt {{file.icon}} ">{{file.file}}</span>
+  </a>
+  ```
+
+  这样就能实现小图标，变得好看很多
+
+> 这里在做的时候 用handlebar渲染的时候css引入总是出现路径问题，解决未果，将渲染模板换成了swig
+
+
+
 ## 总结
 
-domo不难，但是涉及到的零碎知识点比较多，对底层的node有个更进一步了解，也感受到了node在处理网路请求这一块的强大之处，另外es6和es7的新语法很是强大，以后要多做功课。
+domo不难，但是涉及到的零碎知识点比较多
+
+对http网络原理的认识又进一步，包括响应头，压缩 ,缓存。
+
+对底层的node.js有个更进一步了解，也感受到了node在处理网路请求这一块的强大之处
+
+另外es6和es7的新语法很是强大，以后要多做功课。

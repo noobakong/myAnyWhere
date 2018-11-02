@@ -1,5 +1,4 @@
 const fs = require('fs')
-const Handlebars = require('handlebars')
 const path = require('path')
 const promisify = require('util').promisify
 const stat = promisify(fs.stat)
@@ -10,9 +9,6 @@ const compress = require('./compress')
 const range = require('./range')
 const isFresh = require('./cache')
 
-const tplPath = path.join(__dirname, '../template/dir.html')
-const source = fs.readFileSync(tplPath, 'utf8')
-const template = Handlebars.compile(source)
 
 module.exports = async function (req, res, filePath) {
   try {
@@ -45,25 +41,33 @@ module.exports = async function (req, res, filePath) {
       rs.pipe(res)
     } else if (stats.isDirectory()) {
       const files = await readdir(filePath)
-      console.info(files)
+      // console.info(files)
       res.statusCode = 200
       res.setHeader('Content-text', 'text/html')
       const dir = path.relative(config.root, filePath)
+      // console.info('config.root:' + config.root)
+      // console.info('filePath   :' + filePath)
+      // console.info('dir:'+ dir)
+      // console.info(dir)
       const data = {
+        h1: path.join(dir),
         // path.basename() 方法返回一个 path 的最后一部分
         title: path.basename(filePath),
         // path.relative('/data/orandea/test/aaa', '/data/orandea/impl/bbb');
         // 返回: '../../impl/bbb'
         dir: dir ? `/${dir}` : '',
-        files: files.map(file => {
-
+        files: await Promise.all(files.map(async file => {
+          const inFilePath = path.join(filePath, file)
+          const everyfile = await stat(inFilePath)
+          const isDir = everyfile.isDirectory()
+          const icon = isDir ? 'dir' : Mime(file, true)
           return {
             file: decodeURI(file),
-            icon: Mime(file)
+            icon
           }
-        })
+        }))
       }
-      res.end(template(data))
+      res.render('dir',data)
     }
   } catch (error) {
     console.error(error)

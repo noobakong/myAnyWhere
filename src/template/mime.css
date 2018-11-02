@@ -1,0 +1,99 @@
+/*!
+ *
+ * mime-type icons
+ * by firejune(http://firejune.com)
+ * icon image form http://www.splitbrain.org/projects/file_icons
+ *
+ */
+#files .dir { background-image: url(mime/dir.png); }
+#files .m4v, #files .mp4, #files .avi { background-image: url(mime/m4v.png); }
+#files .chm { background-image: url(mime/chm.png); }
+#files .md { background-image: url(mime/md.png); }
+#files .divx { background-image: url(mime/divx.png); }
+#files .html { background-image: url(mime/html.png); }
+#files .lua { background-image: url(mime/lua.png); }
+#files .odi { background-image: url(mime/odi.png); }
+#files .png { background-image: url(mime/png.png); }
+#files .rpm { background-image: url(mime/rpm.png); }
+#files .tar { background-image: url(mime/tar.png); }
+#files .wmv { background-image: url(mime/wmv.png); }
+#files .aiff { background-image: url(mime/aiff.png); }
+#files .class { background-image: url(mime/class.png); }
+#files .doc { background-image: url(mime/doc.png); }
+#files .htm { background-image: url(mime/htm.png); }
+#files .mm { background-image: url(mime/mm.png); }
+#files .odp { background-image: url(mime/odp.png); }
+#files .ppt { background-image: url(mime/ppt.png); }
+#files .rtf { background-image: url(mime/rtf.png); }
+#files .tex { background-image: url(mime/tex.png); }
+#files .xls { background-image: url(mime/xls.png); }
+#files .ai { background-image: url(mime/ai.png); }
+#files .conf { background-image: url(mime/conf.png); }
+#files .dot { background-image: url(mime/dot.png); }
+#files .image { background-image: url(mime/image.png); }
+#files .mov { background-image: url(mime/mov.png); }
+#files .ods { background-image: url(mime/ods.png); }
+#files .ps { background-image: url(mime/ps.png); }
+#files .sig { background-image: url(mime/sig.png); }
+#files .tgz { background-image: url(mime/tgz.png); }
+#files .xml { background-image: url(mime/xml.png); }
+#files .asc { background-image: url(mime/asc.png); }
+#files .c { background-image: url(mime/c.png); }
+#files .eml { background-image: url(mime/eml.png); }
+#files .iso { background-image: url(mime/iso.png); }
+#files .mp3 { background-image: url(mime/mp3.png); }
+#files .odt { background-image: url(mime/odt.png); }
+#files .py { background-image: url(mime/py.png); }
+#files .sql { background-image: url(mime/sql.png); }
+#files .txt { background-image: url(mime/txt.png); }
+#files .xpi { background-image: url(mime/xpi.png); }
+#files .audio { background-image: url(mime/audio.png); }
+#files .cpp { background-image: url(mime/cpp.png); }
+#files .enc { background-image: url(mime/enc.png); }
+#files .jar { background-image: url(mime/jar.png); }
+#files .mpg { background-image: url(mime/mpg.png); }
+#files .ogg { background-image: url(mime/ogg.png); }
+#files .ram { background-image: url(mime/ram.png); }
+#files .swf { background-image: url(mime/swf.png); }
+#files .vcf { background-image: url(mime/vcf.png); }
+#files .xvid { background-image: url(mime/xvid.png); }
+#files .bin { background-image: url(mime/bin.png); }
+#files .cs { background-image: url(mime/cs.png); }
+#files .file { background-image: url(mime/file.png); }
+#files .java { background-image: url(mime/java.png); }
+#files .m { background-image: url(mime/m.png); }
+#files .pdf { background-image: url(mime/pdf.png); }
+#files .rar { background-image: url(mime/rar.png); }
+#files .sxc { background-image: url(mime/sxc.png); }
+#files .video { background-image: url(mime/video.png); }
+#files .zip { background-image: url(mime/zip.png); }
+#files .bz2 { background-image: url(mime/bz2.png); }
+#files .css { background-image: url(mime/css.png); }
+#files .gif { background-image: url(mime/gif.png); }
+#files .jpeg { background-image: url(mime/jpeg.png); }
+#files .odc { background-image: url(mime/odc.png); }
+#files .pgp { background-image: url(mime/pgp.png); }
+#files .rb { background-image: url(mime/rb.png); }
+#files .sxd { background-image: url(mime/sxd.png); }
+#files .vsd { background-image: url(mime/vsd.png); }
+#files .cfc { background-image: url(mime/cfc.png); }
+#files .csv { background-image: url(mime/csv.png); }
+#files .gz { background-image: url(mime/gz.png); }
+#files .jpg { background-image: url(mime/jpg.png); }
+#files .odf { background-image: url(mime/odf.png); }
+#files .php { background-image: url(mime/php.png); }
+#files .sxi { background-image: url(mime/sxi.png); }
+#files .wav { background-image: url(mime/wav.png); }
+#files .cfm { background-image: url(mime/cfm.png); }
+#files .deb { background-image: url(mime/deb.png); }
+#files .hlp { background-image: url(mime/hlp.png); }
+#files .js { background-image: url(mime/js.png); }
+#files .odg { background-image: url(mime/odg.png); }
+#files .pl { background-image: url(mime/pl.png); }
+#files .rm { background-image: url(mime/rm.png); }
+#files .sxw { background-image: url(mime/sxw.png); }
+#files .wma { background-image: url(mime/wma.png); }
+
+.default {
+  background-image: url(mime/txt.png);
+}
