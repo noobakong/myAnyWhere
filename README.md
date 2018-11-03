@@ -24,7 +24,7 @@
 
 - fs模块
 
-  - fs.stat函数 
+  - fs.stat函数
 
     > 使用 fs.stat函数取得stats来获取文件或文件夹的参数
 
@@ -38,7 +38,7 @@
 
   - ...
 
-- promisify 
+- promisify
 
   - async await
 
@@ -185,7 +185,7 @@ server.listen(conf.port, conf.hostname, () => {
 
   *引用时使用绝对路径*
 
-  ```javascript 
+  ```javascript
   const tplPath = path.join(__dirname, '../template/dir.html')
   const source = fs.readFileSync(tplPath, 'utf8')
   const template = Handlebars.compile(source)
@@ -417,7 +417,7 @@ server.listen(conf.port, conf.hostname, () => {
 
 `akong` 就是你要在全局执行的命令，后面则是你要执行的文件，显然我们这里要执行app.js
 
-**在package.json同级目录下执行命令`npm link`** 
+**在package.json同级目录下执行命令`npm link`**
 
 这样，我们就把我的脚本连接到Windows全局中了
 
@@ -454,7 +454,7 @@ server.listen(conf.port, conf.hostname, () => {
 
   然后根据返回的布尔值来决定icon
 
-- 在dir.html中引入编写好的mime.css 
+- 在dir.html中引入编写好的mime.css
 
 - 在html中加入类icon
 
@@ -472,7 +472,7 @@ server.listen(conf.port, conf.hostname, () => {
 
 ## 总结
 
-domo不难，但是涉及到的零碎知识点比较多
+案例不难，但是涉及到的零碎知识点比较多
 
 对http网络原理的认识又进一步，包括响应头，压缩 ,缓存。
 
